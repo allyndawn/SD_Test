@@ -16,6 +16,10 @@
 #include "SD.h"
 #include "SPI.h"
 
+// I added the following line based on https://randomnerdtutorials.com/esp32-microsd-card-arduino/#sdcardcustompins
+// I chose VSPI because that's the SPI exposed by my ESP32 WROOM module
+SPIClass spi = SPIClass(VSPI);
+
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
     Serial.printf("Listing directory: %s\n", dirname);
 
@@ -175,7 +179,12 @@ void testFileIO(fs::FS &fs, const char * path){
 
 void setup(){
     Serial.begin(115200);
-    if(!SD.begin()){
+
+    // I added this per  https://randomnerdtutorials.com/esp32-microsd-card-arduino/#sdcardcustompins
+    spi.begin(SCK, MISO, MOSI, SS);
+
+    // And I modified this to pass in SS spi and clock freq per https://randomnerdtutorials.com/esp32-microsd-card-arduino/#sdcardcustompins
+    if(!SD.begin(SS,spi,8000000)){ // was 80,000,000 which didnt work ... 8,000,000 works though
         Serial.println("Card Mount Failed");
         return;
     }
