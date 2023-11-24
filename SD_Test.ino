@@ -181,10 +181,12 @@ void setup(){
     Serial.begin(115200);
 
     // I added this per  https://randomnerdtutorials.com/esp32-microsd-card-arduino/#sdcardcustompins
+    // These defines are picked up from Library/Arduino15/packages/esp32/hardware/esp32/2.0.14/variants/esp32da/pins_arduino.h
+    // where SCK = 18, MISO = 19, MOSI = 23, and CS = 5
     spi.begin(SCK, MISO, MOSI, SS);
 
     // And I modified this to pass in SS spi and clock freq per https://randomnerdtutorials.com/esp32-microsd-card-arduino/#sdcardcustompins
-    if(!SD.begin(SS,spi,8000000)){ // was 80,000,000 which didnt work ... 8,000,000 works though
+    if(!SD.begin(SS, spi, 8000000)){ // was 80,000,000 which didnt work ... 8,000,000 works though
         Serial.println("Card Mount Failed");
         return;
     }
